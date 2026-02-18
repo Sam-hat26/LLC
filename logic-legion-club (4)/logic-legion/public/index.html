@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Logic Legion Club</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #04080f;
+      --bg2: #070d1a;
+      --cyan: #00e5ff;
+      --purple: #8b2fff;
+      --pink: #ff2d78;
+      --text: #b8d4e8;
+      --muted: #4a6a80;
+      --card: rgba(0, 229, 255, 0.04);
+      --border: rgba(0, 229, 255, 0.18);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Rajdhani', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .grid-bg {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image:
+        linear-gradient(rgba(0,229,255,0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,229,255,0.035) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+
+    .orb {
+      position: fixed; border-radius: 50%; pointer-events: none; z-index: 0;
+      filter: blur(80px); opacity: 0.5;
+      animation: orbpulse 7s ease-in-out infinite;
+    }
+    .orb1 { width: 500px; height: 500px; background: radial-gradient(circle, rgba(139,47,255,0.3), transparent 70%); top: -150px; right: -150px; }
+    .orb2 { width: 400px; height: 400px; background: radial-gradient(circle, rgba(0,229,255,0.2), transparent 70%); bottom: -100px; left: -100px; animation-delay: -3s; }
+    .orb3 { width: 300px; height: 300px; background: radial-gradient(circle, rgba(255,45,120,0.15), transparent 70%); top: 50%; left: 50%; animation-delay: -5s; }
+
+    @keyframes orbpulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
+
+    .container {
+      position: relative; z-index: 1;
+      max-width: 760px; margin: 0 auto;
+      padding: 40px 20px 100px;
+    }
+
+    /* Header */
+    .header { text-align: center; margin-bottom: 50px; animation: fadeDown 0.8s ease both; }
+
+    .logo-badge {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: rgba(0,229,255,0.07);
+      border: 1px solid var(--border); border-radius: 4px;
+      padding: 6px 18px; font-size: 12px; letter-spacing: 4px;
+      color: var(--cyan); text-transform: uppercase;
+      margin-bottom: 20px; animation: flicker 4s infinite;
+    }
+
+    @keyframes flicker {
+      0%, 95%, 100% { opacity: 1; } 96% { opacity: 0.6; } 97% { opacity: 1; } 98% { opacity: 0.7; }
+    }
+
+    .logo-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--cyan); box-shadow: 0 0 8px var(--cyan);
+      animation: blink 1.2s ease-in-out infinite;
+    }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
+
+    h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(2rem, 6vw, 3.8rem);
+      font-weight: 900; line-height: 1.05; letter-spacing: -1px;
+      background: linear-gradient(135deg, var(--cyan) 0%, #fff 40%, var(--purple) 80%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      margin-bottom: 12px;
+    }
+
+    .subtitle {
+      font-size: 16px; font-weight: 400; color: var(--muted);
+      letter-spacing: 1px; max-width: 450px; margin: 0 auto; line-height: 1.6;
+    }
+
+    /* Card */
+    .card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 8px;
+      padding: 40px 36px; position: relative; overflow: hidden;
+      animation: fadeUp 0.9s ease both 0.2s; backdrop-filter: blur(10px);
+    }
+
+    .card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--cyan), var(--purple), var(--pink), transparent);
+      background-size: 200% 100%; animation: scanline 3s linear infinite;
+    }
+
+    @keyframes scanline { 0% { background-position: -100% 0; } 100% { background-position: 200% 0; } }
+
+    /* Form */
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+    .form-group { display: flex; flex-direction: column; gap: 8px; }
+    .form-group.full { grid-column: 1 / -1; }
+
+    label {
+      font-size: 11px; letter-spacing: 2.5px;
+      text-transform: uppercase; color: var(--cyan); font-weight: 600;
+    }
+
+    input, textarea {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--border); border-radius: 4px;
+      color: #e0f0ff; font-family: 'Rajdhani', sans-serif;
+      font-size: 16px; font-weight: 500; padding: 14px 16px;
+      transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
+      outline: none;
+    }
+
+    input:focus, textarea:focus {
+      border-color: var(--cyan);
+      box-shadow: 0 0 0 3px rgba(0,229,255,0.1), 0 0 20px rgba(0,229,255,0.06);
+      background: rgba(0,229,255,0.03);
+    }
+
+    input::placeholder, textarea::placeholder { color: var(--muted); font-weight: 400; }
+
+    textarea { resize: vertical; min-height: 110px; line-height: 1.5; }
+
+    /* Submit */
+    .btn-submit {
+      width: 100%;
+      background: linear-gradient(135deg, var(--cyan) 0%, var(--purple) 100%);
+      border: none; border-radius: 4px; color: #fff;
+      font-family: 'Orbitron', sans-serif; font-size: 15px; font-weight: 700;
+      letter-spacing: 3px; padding: 17px 24px; cursor: pointer;
+      text-transform: uppercase; margin-top: 10px;
+      transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+    }
+
+    .btn-submit:hover:not(:disabled) { opacity: 0.92; transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,229,255,0.25); }
+    .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .btn-submit .btn-loader {
+      display: none; width: 18px; height: 18px;
+      border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff;
+      border-radius: 50%; animation: spin 0.7s linear infinite; margin: 0 auto;
+    }
+
+    .btn-submit.loading .btn-text { display: none; }
+    .btn-submit.loading .btn-loader { display: block; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Toast */
+    .toast {
+      position: fixed; bottom: 30px; left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--bg2); border: 1px solid var(--border); border-radius: 6px;
+      padding: 16px 28px; font-size: 15px; font-weight: 600; letter-spacing: 0.5px;
+      z-index: 9999; transition: transform 0.4s cubic-bezier(.175,.885,.32,1.275);
+      max-width: 90vw; text-align: center; box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+    .toast.success { border-color: var(--cyan); color: var(--cyan); }
+    .toast.error { border-color: var(--pink); color: var(--pink); }
+
+    /* Admin button */
+    .admin-btn-wrap { text-align: center; margin-top: 40px; animation: fadeUp 1s ease both 0.5s; }
+
+    .btn-admin {
+      background: transparent; border: 1px solid rgba(255,45,120,0.3);
+      color: rgba(255,45,120,0.7); border-radius: 4px;
+      font-family: 'Orbitron', sans-serif; font-size: 11px; letter-spacing: 3px;
+      padding: 12px 28px; cursor: pointer; text-transform: uppercase; transition: all 0.2s;
+    }
+    .btn-admin:hover { border-color: var(--pink); color: var(--pink); box-shadow: 0 0 20px rgba(255,45,120,0.15); }
+
+    /* Modal */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 500;
+      background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+      align-items: center; justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      background: var(--bg2); border: 1px solid var(--border); border-radius: 8px;
+      padding: 40px 36px; width: 100%; max-width: 420px; margin: 20px;
+      position: relative; animation: fadeUp 0.4s ease;
+    }
+
+    .modal::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--pink), transparent);
+    }
+
+    .modal h2 { font-family: 'Orbitron', sans-serif; font-size: 18px; color: var(--pink); margin-bottom: 8px; letter-spacing: 2px; }
+    .modal p { color: var(--muted); font-size: 14px; margin-bottom: 24px; }
+
+    .modal-close {
+      position: absolute; top: 16px; right: 16px;
+      background: none; border: none; color: var(--muted); cursor: pointer;
+      font-size: 22px; line-height: 1; transition: color 0.2s;
+    }
+    .modal-close:hover { color: var(--pink); }
+
+    .modal input { margin-bottom: 16px; letter-spacing: 4px; font-family: 'Orbitron', sans-serif; font-size: 14px; }
+
+    .btn-modal-submit {
+      width: 100%; background: linear-gradient(135deg, var(--pink), var(--purple));
+      border: none; border-radius: 4px; color: #fff;
+      font-family: 'Orbitron', sans-serif; font-size: 13px; letter-spacing: 3px;
+      padding: 14px; cursor: pointer; font-weight: 700;
+      transition: opacity 0.2s, transform 0.15s;
+    }
+    .btn-modal-submit:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    .modal-error { color: var(--pink); font-size: 13px; margin-top: 10px; min-height: 18px; text-align: center; }
+
+    /* Dashboard */
+    .dashboard { display: none; animation: fadeUp 0.5s ease; }
+    .dashboard.open { display: block; }
+
+    .dash-header {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 12px; margin-bottom: 28px;
+    }
+    .dash-header h2 { font-family: 'Orbitron', sans-serif; font-size: clamp(1.2rem, 4vw, 1.8rem); color: var(--pink); letter-spacing: 2px; }
+    .dash-meta { font-size: 13px; color: var(--muted); letter-spacing: 1px; }
+    .dash-meta span { color: var(--cyan); font-weight: 700; }
+
+    .btn-logout {
+      background: transparent; border: 1px solid var(--border); color: var(--muted);
+      border-radius: 4px; font-family: 'Rajdhani', sans-serif;
+      font-size: 13px; letter-spacing: 2px; padding: 8px 18px;
+      cursor: pointer; text-transform: uppercase; transition: all 0.2s;
+    }
+    .btn-logout:hover { border-color: var(--pink); color: var(--pink); }
+
+    .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    thead { background: rgba(0,229,255,0.05); }
+
+    th {
+      padding: 14px 16px; text-align: left;
+      font-family: 'Orbitron', sans-serif; font-size: 9px; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--cyan); white-space: nowrap;
+      border-bottom: 1px solid var(--border);
+    }
+
+    td {
+      padding: 14px 16px; border-bottom: 1px solid rgba(0,229,255,0.06);
+      color: var(--text); vertical-align: top; font-size: 14px; font-weight: 500;
+    }
+
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(0,229,255,0.03); }
+
+    .td-long { max-width: 180px; word-break: break-word; color: var(--muted); font-size: 13px; line-height: 1.5; }
+
+    .domain-pill {
+      display: inline-block; padding: 3px 10px; border-radius: 20px;
+      font-size: 11px; font-weight: 700; letter-spacing: 1px;
+      background: rgba(0,229,255,0.1); color: var(--cyan);
+      border: 1px solid rgba(0,229,255,0.25); white-space: nowrap;
+    }
+
+    .btn-delete {
+      background: none; border: 1px solid rgba(255,45,120,0.2);
+      color: rgba(255,45,120,0.5); border-radius: 4px; font-size: 12px;
+      padding: 5px 10px; cursor: pointer; letter-spacing: 1px;
+      font-family: 'Rajdhani', sans-serif; font-weight: 600; transition: all 0.2s;
+    }
+    .btn-delete:hover { border-color: var(--pink); color: var(--pink); background: rgba(255,45,120,0.05); }
+
+    .empty-state { text-align: center; padding: 60px 20px; color: var(--muted); }
+    .empty-state .icon { font-size: 48px; margin-bottom: 12px; }
+    .empty-state p { font-size: 16px; letter-spacing: 1px; }
+
+    @keyframes fadeDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+    .footer { text-align: center; margin-top: 60px; font-size: 12px; color: var(--muted); letter-spacing: 2px; }
+
+    @media (max-width: 580px) {
+      .form-grid { grid-template-columns: 1fr; }
+      .card { padding: 28px 20px; }
+      .modal { padding: 30px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div class="orb orb3"></div>
+
+<div class="container">
+
+  <!-- Registration View -->
+  <div id="registerView">
+
+    <div class="header">
+      <div class="logo-badge">
+        <div class="logo-dot"></div>
+        Est. 2026
+        <div class="logo-dot"></div>
+      </div>
+      <h1>LOGIC LEGION</h1>
+      <p class="subtitle">Where minds converge, code ignites, and legends are forged. Join the club.</p>
+    </div>
+
+    <div class="card">
+      <form id="registerForm">
+        <div class="form-grid">
+
+          <div class="form-group">
+            <label for="name">Full Name</label>
+            <input type="text" id="name" placeholder="Enter your full name" required autocomplete="off"/>
+          </div>
+
+          <div class="form-group">
+            <label for="mobno">Mobile Number</label>
+            <input type="tel" id="mobno" placeholder="Enter your 10-digit mobile number" maxlength="10" required autocomplete="off"/>
+          </div>
+
+          <div class="form-group">
+            <label for="branch">Branch</label>
+            <input type="text" id="branch" placeholder="e.g. Computer Science Engineering" required autocomplete="off"/>
+          </div>
+
+          <div class="form-group">
+            <label for="year">Year of Study</label>
+            <input type="text" id="year" placeholder="e.g. 2nd Year" required autocomplete="off"/>
+          </div>
+
+          <div class="form-group full">
+            <label for="domain">Domain You're Interested In</label>
+            <input type="text" id="domain" placeholder="e.g. Web Development, AI/ML, Cybersecurity, Cloud Computing..." required autocomplete="off"/>
+          </div>
+
+          <div class="form-group full">
+            <label for="excitement">What Excites You About Joining Logic Legion?</label>
+            <textarea id="excitement" placeholder="Tell us what fires you up — projects, hackathons, community, learning, building something cool..." required></textarea>
+          </div>
+
+        </div>
+
+        <button type="submit" class="btn-submit" id="submitBtn">
+          <span class="btn-text">JOIN THE LEGION 🚀</span>
+          <div class="btn-loader"></div>
+        </button>
+      </form>
+    </div>
+
+    <div class="admin-btn-wrap">
+      <button class="btn-admin" onclick="openAdminModal()">⚙ Admin Dashboard</button>
+    </div>
+
+    <div class="footer">
+      LOGIC LEGION CLUB &nbsp;·&nbsp; LLC@2026 &nbsp;·&nbsp; ALL SYSTEMS ONLINE
+    </div>
+  </div>
+
+
+  <!-- Admin Dashboard View -->
+  <div id="dashboardView" class="dashboard">
+    <div class="dash-header">
+      <div>
+        <h2>⚡ ADMIN DASHBOARD</h2>
+        <div class="dash-meta">Total Registered: <span id="totalCount">0</span></div>
+      </div>
+      <button class="btn-logout" onclick="logout()">✕ Logout</button>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>Mobile</th>
+            <th>Branch</th>
+            <th>Year</th>
+            <th>Domain</th>
+            <th>Excitement</th>
+            <th>Registered</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="studentsTable">
+          <tr><td colspan="9">
+            <div class="empty-state"><div class="icon">⚡</div><p>Loading data...</p></div>
+          </td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="footer" style="margin-top:40px;">
+      LOGIC LEGION CLUB &nbsp;·&nbsp; ADMIN PANEL
+    </div>
+  </div>
+
+</div>
+
+<!-- Admin Modal -->
+<div class="modal-overlay" id="adminModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeAdminModal()">✕</button>
+    <h2>🔐 ADMIN ACCESS</h2>
+    <p>Enter the admin password to view all student registrations.</p>
+    <input type="password" id="adminPassword" placeholder="Enter password" onkeydown="if(event.key==='Enter') submitAdmin()"/>
+    <button class="btn-modal-submit" onclick="submitAdmin()">UNLOCK DASHBOARD</button>
+    <div class="modal-error" id="adminError"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const API = '';
+  let adminPass = '';
+
+  function showToast(msg, type = 'success') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = `toast ${type} show`;
+    setTimeout(() => t.classList.remove('show'), 3800);
+  }
+
+  document.getElementById('registerForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('submitBtn');
+    btn.classList.add('loading');
+    btn.disabled = true;
+
+    const data = {
+      name: document.getElementById('name').value.trim(),
+      mobno: document.getElementById('mobno').value.trim(),
+      branch: document.getElementById('branch').value.trim(),
+      year: document.getElementById('year').value.trim(),
+      domain: document.getElementById('domain').value.trim(),
+      excitement: document.getElementById('excitement').value.trim()
+    };
+
+    try {
+      const res = await fetch(`${API}/api/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      const json = await res.json();
+      if (json.success) {
+        showToast(json.message, 'success');
+        document.getElementById('registerForm').reset();
+      } else {
+        showToast(json.message, 'error');
+      }
+    } catch {
+      showToast('Network error. Is the server running?', 'error');
+    }
+
+    btn.classList.remove('loading');
+    btn.disabled = false;
+  });
+
+  function openAdminModal() {
+    document.getElementById('adminModal').classList.add('open');
+    document.getElementById('adminPassword').value = '';
+    document.getElementById('adminError').textContent = '';
+    setTimeout(() => document.getElementById('adminPassword').focus(), 100);
+  }
+
+  function closeAdminModal() {
+    document.getElementById('adminModal').classList.remove('open');
+  }
+
+  async function submitAdmin() {
+    const pw = document.getElementById('adminPassword').value;
+    if (!pw) return;
+    try {
+      const res = await fetch(`${API}/api/admin/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: pw })
+      });
+      const json = await res.json();
+      if (json.success) {
+        adminPass = pw;
+        closeAdminModal();
+        showDashboard();
+      } else {
+        document.getElementById('adminError').textContent = '❌ ' + json.message;
+        document.getElementById('adminPassword').value = '';
+        document.getElementById('adminPassword').focus();
+      }
+    } catch {
+      document.getElementById('adminError').textContent = 'Network error.';
+    }
+  }
+
+  async function showDashboard() {
+    document.getElementById('registerView').style.display = 'none';
+    document.getElementById('dashboardView').classList.add('open');
+    await loadStudents();
+  }
+
+  async function loadStudents() {
+    try {
+      const res = await fetch(`${API}/api/admin/students`, {
+        headers: { 'x-admin-password': adminPass }
+      });
+      const json = await res.json();
+      if (!json.success) { showToast('Failed to load data.', 'error'); return; }
+
+      const students = json.students;
+      document.getElementById('totalCount').textContent = students.length;
+      const tbody = document.getElementById('studentsTable');
+
+      if (students.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="9"><div class="empty-state"><div class="icon">📭</div><p>No students registered yet.</p></div></td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = students.map((s, i) => `
+        <tr id="row-${s._id}">
+          <td style="color:var(--muted);font-size:12px;">${i + 1}</td>
+          <td style="color:#e0f0ff;font-weight:600;">${esc(s.name)}</td>
+          <td style="font-family:'Orbitron',sans-serif;font-size:12px;letter-spacing:1px;">${esc(s.mobno)}</td>
+          <td>${esc(s.branch)}</td>
+          <td style="color:var(--muted);font-size:13px;">${esc(s.year)}</td>
+          <td><span class="domain-pill">${esc(s.domain)}</span></td>
+          <td class="td-long">${esc(s.excitement)}</td>
+          <td style="font-size:12px;color:var(--muted);white-space:nowrap;">${new Date(s.registeredAt).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})}</td>
+          <td><button class="btn-delete" onclick="deleteStudent('${s._id}')">Delete</button></td>
+        </tr>
+      `).join('');
+    } catch {
+      showToast('Failed to fetch data.', 'error');
+    }
+  }
+
+  async function deleteStudent(id) {
+    if (!confirm('Delete this student record?')) return;
+    try {
+      const res = await fetch(`${API}/api/admin/students/${id}`, {
+        method: 'DELETE',
+        headers: { 'x-admin-password': adminPass }
+      });
+      const json = await res.json();
+      if (json.success) {
+        document.getElementById(`row-${id}`)?.remove();
+        const count = document.querySelectorAll('#studentsTable tr[id]').length;
+        document.getElementById('totalCount').textContent = count;
+        showToast('Student deleted.', 'success');
+      } else {
+        showToast('Could not delete.', 'error');
+      }
+    } catch {
+      showToast('Network error.', 'error');
+    }
+  }
+
+  function logout() {
+    adminPass = '';
+    document.getElementById('dashboardView').classList.remove('open');
+    document.getElementById('registerView').style.display = 'block';
+  }
+
+  function esc(str) {
+    return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  document.getElementById('adminModal').addEventListener('click', function(e) {
+    if (e.target === this) closeAdminModal();
+  });
+</script>
+</body>
+</html>
